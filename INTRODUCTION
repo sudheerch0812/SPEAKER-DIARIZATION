@@ -1,0 +1,15 @@
+Sound diarisation, also known as speaker diarisation, is a fundamental task in audio
+signal processing that involves the segmentation of an audio stream into distinct
+segments corresponding to different speakers or sound sources. This process is
+essential for numerous applications, including speech recognition, speaker
+identification, and content analysis. By automatically partitioning audio data into
+speaker-specific segments, sound diarisation enables efficient organization,
+retrieval, and analysis of audio content across various domains.
+The importance of sound diarisation stems from its role in enabling advanced audio
+processing tasks. In speech recognition systems, accurate segmentation of audio
+streams into speaker-specific segments improves the performance of automatic
+speech recognition by providing context and speaker-specific information to the
+recognition algorithms. Similarly, in speaker identification and verification
+systems, sound diarisation assists in separating speech from different speakers,
+facilitating the identification and authentication of individuals based on their voice
+characteristics.
