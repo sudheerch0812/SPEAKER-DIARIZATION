@@ -1,0 +1,54 @@
+# speechbrain (used for speaker embedding)
+!pip install -qq torch==1.11.0 torchvision==0.12.0
+torchaudio==0.11.0 torchtext==0.12.0
+!pip install -qq speechbrain==0.5.12
+# pyannote.audio (used for speaker diarization)
+!pip install -qq pyannote.audio==2.1.1
+# OpenAI whisper (used for automatic speech recognition)
+!pip install -qq git+https://github.com/openai/whisper.git
+# upload an audio file (might not work for large files)
+import google.colab
+audio_file = list(google.colab.files.upload())[0]
+# log in on Huggingface hub (where pretrained pyannote models are
+hosted)
+from huggingface_hub import notebook_login
+notebook_login()
+# load pyannote.audio speaker diarization
+from pyannote.audio import Pipeline
+speaker_diarization = Pipeline.from_pretrained("pyannote/speakerdiarization@2.1",
+use_auth_token=Tru
+e)
+# apply speaker diarization
+who_speaks_when = speaker_diarization(audio_file,
+num_speakers=None, # these
+values
+min_speakers=None, # can
+be modified by the user
+max_speakers=None) # when
+they are known
+# reset notebook visualization (including start time, end time
+and speaker colors)
+from pyannote.core import notebook
+notebook.reset()
+from pyannote.core import Segment
+notebook.crop = Segment(0, 200)
+# rename speakers if you know their name
+who_speaks_when = who_speaks_when.rename_labels({"SPEAKER_01":
+"Jack", "SPEAKER_02": "Sparrow"})
+who_speaks_when
+# load OpenAI Whisper automatic speech transcription
+import whisper
+# choose among "tiny", "base", "small", "medium", "large"
+# go to https://github.com/openai/whisper/ to see other
+model = whisper.load_model("small")
+# transcribing two minutes
+from pyannote.core import Segment
+first_minute = Segment(0, 120)
+from pyannote.audio import Audio
+audio = Audio(sample_rate=16000, mono=True)
+for segment, _, speaker in
+who_speaks_when.crop(first_minute).itertracks(yield_label=True):
+waveform, sample_rate = audio.crop(audio_file, segment)
+text = model.transcribe(waveform.squeeze().numpy())["text"]
+print(f"{segment.start:06.1f}s {segment.end:06.1f}s
+{speaker}: {text}")
